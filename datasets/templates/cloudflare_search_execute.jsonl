@@ -1,0 +1,3 @@
+{"user_query":"List available tools and how to use them.","reference_answer":"search","additional_context":{"profile":"cloudflare_codemode"}}
+{"user_query":"Execute code to compute 17 + 25 and return only the result.","reference_answer":"42","additional_context":{"profile":"cloudflare_codemode"}}
+{"user_query":"First discover capability, then run execution to summarize output.","reference_answer":"execute","additional_context":{"profile":"cloudflare_codemode"}}

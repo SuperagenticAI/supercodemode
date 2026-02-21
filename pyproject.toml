@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "supercodemode"
+version = "0.1.0"
+description = "Super Code Mode: MCP/Cloudflare adapters and GEPA optimization harness"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "Shashi Jagtap", email = "shashi@super-agentic.ai" }
+]
+maintainers = [
+  { name = "Shashi Jagtap", email = "shashi@super-agentic.ai" }
+]
+dependencies = [
+  "gepa",
+  "mcp",
+]
+
+[project.optional-dependencies]
+dev = []
+
+[project.scripts]
+scm = "supercodemode.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["supercodemode*"]
+exclude = ["Reference*", "showcase*"]

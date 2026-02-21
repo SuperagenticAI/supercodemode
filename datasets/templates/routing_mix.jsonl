@@ -1,0 +1,4 @@
+{"user_query":"Do we have a tool to discover capabilities?","reference_answer":"search","additional_context":{}}
+{"user_query":"Run a deterministic calculation: (7*6)+1","reference_answer":"43","additional_context":{}}
+{"user_query":"What can you do before execution?","reference_answer":"search","additional_context":{}}
+{"user_query":"Now execute a plan that returns 42","reference_answer":"42","additional_context":{}}

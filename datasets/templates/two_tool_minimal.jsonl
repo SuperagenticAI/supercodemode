@@ -1,0 +1,2 @@
+{"user_query":"What tools are available for this task?","reference_answer":"search_tools","additional_context":{}}
+{"user_query":"Please calculate 17 + 25 using the execution tool.","reference_answer":"42","additional_context":{}}

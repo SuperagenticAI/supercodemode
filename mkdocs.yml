@@ -1,0 +1,78 @@
+site_name: SuperCodeMode
+site_description: Optimize Code Mode client behavior for MCP and HTTP runtimes with GEPA
+site_url: https://example.com/supercodemode
+repo_name: supercodemode
+repo_url: https://example.com/supercodemode
+
+theme:
+  name: material
+  language: en
+  font:
+    text: Inter
+    code: Fira Code
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.indexes
+    - navigation.path
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+  palette:
+    - scheme: slate
+      primary: black
+      accent: cyan
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+      pygments_style: monokai
+  - pymdownx.inlinehilite
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - "🏠 Home": index.md
+  - "🚀 Getting Started":
+      - getting-started/index.md
+      - "📦 Install": getting-started/install.md
+      - "⚡ First Run": getting-started/first-run.md
+      - "🧒 Teen Guide": getting-started/teen-guide.md
+  - "🧪 Examples":
+      - guides/index.md
+      - "🧭 Examples Overview": guides/examples.md
+      - "🧠 GEPA Adapter Changes": guides/gepa-adapter.md
+      - "☁️ Cloudflare MCP": guides/cloudflare-http.md
+      - "💸 Gemini Optimization": guides/gemini-optimization.md
+      - "🐳 Local and Docker": guides/local-docker.md
+  - "🛠️ CLI and Config":
+      - reference/index.md
+      - "💻 CLI Reference": reference/cli.md
+      - "⚙️ Config and Env": reference/configuration.md
+      - "🗺️ Code Map": reference/code-map.md
+  - "📡 Operations":
+      - operations/index.md
+      - "🩺 Doctor": operations/doctor.md
+      - "📈 Observability": operations/observability.md
+      - "🧯 Troubleshooting": operations/troubleshooting.md
