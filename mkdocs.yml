@@ -69,7 +69,7 @@ nav:
       - "💸 Gemini Optimization": guides/gemini-optimization.md
       - "🐳 Local and Docker": guides/local-docker.md
   - "🛠️ CLI and Config":
-      - reference/index.md
+      - "📘 Overview": reference/index.md
       - "💻 CLI Reference": reference/cli.md
       - "⚙️ Config and Env": reference/configuration.md
       - "📊 Telemetry Schema": reference/telemetry-schema.md
