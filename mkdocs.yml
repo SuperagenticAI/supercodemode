@@ -1,11 +1,13 @@
 site_name: SuperCodeMode
 site_description: Optimize Code Mode client behavior for MCP and HTTP runtimes with GEPA
-site_url: https://example.com/supercodemode
+site_url: https://superagenticai.github.io/supercodemode/
 repo_name: supercodemode
-repo_url: https://example.com/supercodemode
+repo_url: https://github.com/SuperagenticAI/supercodemode
 
 theme:
   name: material
+  logo: https://raw.githubusercontent.com/SuperagenticAI/supercodemode/main/assets/supercodemode.png
+  favicon: https://raw.githubusercontent.com/SuperagenticAI/supercodemode/main/assets/favicon.png
   language: en
   font:
     text: Inter

@@ -1,5 +1,9 @@
 # SuperCodeMode
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/SuperagenticAI/supercodemode/main/assets/supercodemode.png" alt="SuperCodeMode logo" width="220">
+</p>
+
 SuperCodeMode is an optimization framework for Code Mode style client behavior.
 
 It helps MCP and HTTP tool users improve quality by tuning client side instruction text and routing policy.

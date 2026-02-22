@@ -1,5 +1,9 @@
 # Super Code Mode (`supercodemode`)
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/SuperagenticAI/supercodemode/main/assets/supercodemode.png" alt="SuperCodeMode" width="220">
+</p>
+
 [![PyPI version](https://img.shields.io/pypi/v/supercodemode.svg)](https://pypi.org/project/supercodemode/)
 [![Python versions](https://img.shields.io/pypi/pyversions/supercodemode.svg)](https://pypi.org/project/supercodemode/)
 [![License](https://img.shields.io/pypi/l/supercodemode.svg)](LICENSE)
