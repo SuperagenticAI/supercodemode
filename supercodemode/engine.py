@@ -218,6 +218,7 @@ def _summarize_eval_result(eval_result: Mapping[str, Any], *, candidate: Mapping
     trajectories = list(eval_result.get("trajectories", []) or [])
     scores = [float(x) for x in (eval_result.get("scores", []) or [])]
     selected_tool_counts = Counter()
+    error_categories = Counter()
     tool_call_count_total = 0
     error_count = 0
     for traj in trajectories:
@@ -225,8 +226,10 @@ def _summarize_eval_result(eval_result: Mapping[str, Any], *, candidate: Mapping
         if isinstance(tool, str) and tool:
             selected_tool_counts[tool] += 1
         tool_call_count_total += len(traj.get("tool_calls", []) or [])
-        if traj.get("error"):
+        err = traj.get("error")
+        if err:
             error_count += 1
+            error_categories[_classify_error(str(err))] += 1
 
     avg_score = float(eval_result.get("avg", mean(scores) if scores else 0.0))
     num_examples = len(scores)
@@ -238,6 +241,7 @@ def _summarize_eval_result(eval_result: Mapping[str, Any], *, candidate: Mapping
         "tool_call_count_total": tool_call_count_total,
         "tool_call_count_avg": (tool_call_count_total / num_examples) if num_examples else 0.0,
         "selected_tools": dict(selected_tool_counts),
+        "error_categories": dict(error_categories),
         "candidate_fields": sorted([k for k, v in candidate.items() if isinstance(v, str) and v]),
         "candidate_field_lengths": {
             k: len(v) for k, v in candidate.items() if isinstance(k, str) and isinstance(v, str)
@@ -306,6 +310,7 @@ def _emit_run_summary_event(event_name: str, summary: Mapping[str, Any]) -> None
         tool_call_count_total=int(summary.get("tool_call_count_total", 0)),
         tool_call_count_avg=float(summary.get("tool_call_count_avg", 0.0)),
         selected_tools=summary.get("selected_tools", {}),
+        error_categories=summary.get("error_categories", {}),
     )
 
 
@@ -341,3 +346,24 @@ def _emit_optimize_summary_event(event_name: str, summary: Mapping[str, Any]) ->
         tuned_avg=float(summary.get("tuned_avg", 0.0)) if "tuned_avg" in summary else None,
         delta_vs_baseline=float(summary.get("delta_vs_baseline", 0.0)) if "delta_vs_baseline" in summary else None,
     )
+
+
+def _classify_error(error: str) -> str:
+    msg = (error or "").lower()
+    if not msg:
+        return "none"
+    if "401" in msg or "unauthorized" in msg or "forbidden" in msg:
+        return "auth"
+    if "timeout" in msg or "timed out" in msg:
+        return "timeout"
+    if "validation" in msg or "invalid arguments" in msg or "schema" in msg:
+        return "schema_mismatch"
+    if "mcp" in msg and ("connect" in msg or "transport" in msg or "stream" in msg):
+        return "mcp_transport"
+    if "docker" in msg:
+        return "sandbox_docker"
+    if "monty" in msg:
+        return "sandbox_monty"
+    if "execution error" in msg or "executor" in msg or "internal error" in msg:
+        return "runtime_execution"
+    return "other"

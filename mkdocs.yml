@@ -70,6 +70,7 @@ nav:
       - reference/index.md
       - "💻 CLI Reference": reference/cli.md
       - "⚙️ Config and Env": reference/configuration.md
+      - "📊 Telemetry Schema": reference/telemetry-schema.md
       - "🗺️ Code Map": reference/code-map.md
   - "📡 Operations":
       - operations/index.md

@@ -64,10 +64,40 @@ From PyPI:
 pip install supercodemode
 ```
 
+With `uv` (tool install, recommended for CLI usage):
+
+```bash
+uv tool install supercodemode
+```
+
+With `uv` (current environment):
+
+```bash
+uv pip install supercodemode
+```
+
 Optional Monty executor backend:
 
 ```bash
 pip install "supercodemode[monty]"
+```
+
+With `uv`:
+
+```bash
+uv pip install "supercodemode[monty]"
+```
+
+Optional observability integrations (LangSmith, Logfire, MLflow, Langfuse):
+
+```bash
+pip install "supercodemode[observability]"
+```
+
+With `uv`:
+
+```bash
+uv pip install "supercodemode[observability]"
 ```
 
 Then verify install:
@@ -80,6 +110,12 @@ For local development:
 
 ```bash
 pip install -e .
+```
+
+With `uv`:
+
+```bash
+uv pip install -e .
 ```
 
 ## Quick Start
@@ -308,6 +344,11 @@ rollups for comparisons and quick benchmarking.
 CLI commands also stamp command context into events (for example `cli_command`,
 `cli_runner`, and `cli_executor_backend`) to make JSONL/OTLP filtering easier.
 
+Benchmark and run summaries also include:
+
+- runtime capability hints (for example local vs docker vs monty constraints)
+- error taxonomy rollups (`error_categories`) for quick failure analysis
+
 ## Relationship to GEPA
 
 This repo is the end-to-end GEPA optimization demo and experimentation harness
@@ -355,3 +396,14 @@ mkdocs build
 - a vendored GEPA contribution snapshot exists in `vendor/gepa_new_files`
 - refresh vendor snapshot with:
   - `GEPA_SOURCE_DIR=/path/to/gepa ./scripts/sync_gepa_vendor.sh`
+
+## Release (Maintainers)
+
+Build and publish with `uv`:
+
+```bash
+uv build
+uv publish
+```
+
+If publishing to PyPI, make sure your credentials/token are configured for `uv publish`.

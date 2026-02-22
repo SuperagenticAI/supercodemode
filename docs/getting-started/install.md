@@ -3,16 +3,60 @@
 ## Requirements
 
 - Python 3.10+
-- `pip`
+- `pip` or `uv`
 - optional Docker Desktop for Docker backend
 
-## Install Package
+## Install Package (CLI)
+
+With `pip`:
+
+```bash
+pip install supercodemode
+```
+
+With `uv` (tool install):
+
+```bash
+uv tool install supercodemode
+```
+
+With `uv` (current environment):
+
+```bash
+uv pip install supercodemode
+```
+
+## Optional Extras
+
+Monty executor backend:
+
+```bash
+pip install "supercodemode[monty]"
+uv pip install "supercodemode[monty]"
+```
+
+Observability integrations (Logfire, MLflow, LangSmith, Langfuse):
+
+```bash
+pip install "supercodemode[observability]"
+uv pip install "supercodemode[observability]"
+```
+
+## Install Package (Local Development)
+
+With `pip`:
 
 ```bash
 pip install -e .
 ```
 
-This installs CLI command `scm`.
+With `uv`:
+
+```bash
+uv pip install -e .
+```
+
+This installs the CLI command `scm`.
 
 ## Verify Install
 

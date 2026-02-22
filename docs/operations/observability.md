@@ -72,6 +72,16 @@ Summary events are also emitted for:
 - showcase comparison summary
 - benchmark summary
 
+The benchmark and run summary payloads are designed for filtering/aggregation and
+include compact fields such as:
+
+- selected tool histograms
+- error taxonomy rollups (`error_categories`)
+- runner/executor context (`cli_runner`, `cli_executor_backend`)
+
+See `reference/telemetry-schema.md` for the exact summary fields, runtime
+capability hints, and current error taxonomy labels.
+
 ## Summary Artifacts (with `--save-artifact`)
 
 When you save CLI artifacts, SuperCodeMode also writes compact summary files for

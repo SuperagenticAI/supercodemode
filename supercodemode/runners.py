@@ -206,7 +206,10 @@ class MCPStreamableHTTPCodeModeRunner:
                     await session.initialize()
                     tools = await session.list_tools()
                     available = [tool.name for tool in tools.tools]
-                    logs = [f"available_tools={available}"]
+                    tool_by_name = {tool.name: tool for tool in tools.tools}
+                    caps = _runtime_capabilities("mcp-http")
+                    logs = [f"available_tools={available}", f"runtime_capabilities={json.dumps(caps)}"]
+                    emit_event("runner.mcp_http.capabilities", capabilities=caps, available_tools=available)
 
                     search_tool = _pick_tool_name(
                         available=available,
@@ -221,7 +224,7 @@ class MCPStreamableHTTPCodeModeRunner:
 
                     if "tools are available" in user_query.lower():
                         if "search_tools" in codemode_description.lower() and search_tool:
-                            args = {"task_description": "available tools"}
+                            args = _build_search_args(tool_by_name.get(search_tool))
                             emit_event("runner.mcp_http.tool_call.start", tool=search_tool, arguments=args)
                             result = await session.call_tool(search_tool, args)
                             emit_event("runner.mcp_http.tool_call.end", tool=search_tool)
@@ -277,7 +280,7 @@ class MCPStreamableHTTPCodeModeRunner:
                             )
                             return out
 
-                        args = {"code": "return 17 + 25;"}
+                        args = _build_execute_args(tool_by_name.get(exec_tool))
                         emit_event("runner.mcp_http.tool_call.start", tool=exec_tool, arguments=args)
                         result = await session.call_tool(exec_tool, args)
                         emit_event("runner.mcp_http.tool_call.end", tool=exec_tool)
@@ -332,6 +335,105 @@ def _extract_text_result(result: Any) -> str:
     if getattr(result, "structured_content", None):
         return str(result.structured_content)
     return ""
+
+
+def _tool_input_schema(tool: Any) -> Mapping[str, Any]:
+    if tool is None:
+        return {}
+    schema = getattr(tool, "inputSchema", None)
+    return schema if isinstance(schema, Mapping) else {}
+
+
+def _schema_fields(schema: Mapping[str, Any]) -> tuple[set[str], set[str]]:
+    props_src = schema.get("properties")
+    props = set(props_src.keys()) if isinstance(props_src, Mapping) else set()
+    req_src = schema.get("required")
+    req = {k for k in req_src if isinstance(k, str)} if isinstance(req_src, list) else set()
+    return props, req
+
+
+def _build_search_args(tool: Any) -> dict[str, Any]:
+    schema = _tool_input_schema(tool)
+    props, req = _schema_fields(schema)
+    if "task_description" in props or "task_description" in req:
+        return {"task_description": "available tools"}
+    if "query" in props or "query" in req:
+        return {"query": "available tools"}
+    if "prompt" in props or "prompt" in req:
+        return {"prompt": "available tools"}
+    if "code" in props or "code" in req:
+        return {
+            "code": (
+                "async () => ({ totalPaths: Object.keys(spec?.paths || {}).length, "
+                "samplePaths: Object.keys(spec?.paths || {}).slice(0, 5) })"
+            )
+        }
+    return {"task_description": "available tools"}
+
+
+def _build_execute_args(tool: Any) -> dict[str, Any]:
+    schema = _tool_input_schema(tool)
+    props, req = _schema_fields(schema)
+    if "code" in props or "code" in req:
+        return {"code": "async () => ({ result: 17 + 25 })"}
+    if "expression" in props or "expression" in req:
+        return {"expression": "17 + 25"}
+    if "query" in props or "query" in req:
+        return {"query": "17 + 25"}
+    if "prompt" in props or "prompt" in req:
+        return {"prompt": "compute 17 + 25"}
+    return {"code": "return 17 + 25;"}
+
+
+def _build_discovery_fallback_args(tool: Any) -> dict[str, Any]:
+    schema = _tool_input_schema(tool)
+    props, req = _schema_fields(schema)
+    if "code" in props or "code" in req:
+        return {"code": "tool discovery omitted"}
+    if "query" in props or "query" in req:
+        return {"query": "tool discovery omitted"}
+    if "prompt" in props or "prompt" in req:
+        return {"prompt": "tool discovery omitted"}
+    return {"code": "tool discovery omitted"}
+
+
+def _runtime_capabilities(backend: str) -> dict[str, Any]:
+    key = (backend or "").lower()
+    if key == "docker":
+        return {
+            "backend": "docker",
+            "supports_network": False,
+            "supports_filesystem": False,
+            "supports_packages": False,
+            "sandbox_strength": "high",
+            "startup_latency_class": "medium",
+        }
+    if key == "monty":
+        return {
+            "backend": "monty",
+            "supports_network": False,
+            "supports_filesystem": False,
+            "supports_packages": False,
+            "sandbox_strength": "high",
+            "startup_latency_class": "low",
+        }
+    if key == "mcp-http":
+        return {
+            "backend": "mcp-http",
+            "supports_network": "server-defined",
+            "supports_filesystem": "server-defined",
+            "supports_packages": "server-defined",
+            "sandbox_strength": "server-defined",
+            "startup_latency_class": "remote",
+        }
+    return {
+        "backend": "local",
+        "supports_network": False,
+        "supports_filesystem": False,
+        "supports_packages": False,
+        "sandbox_strength": "low",
+        "startup_latency_class": "low",
+    }
 
 
 class MCPStdioCodeModeRunner:
@@ -389,12 +491,15 @@ class MCPStdioCodeModeRunner:
         alias_map = tool_alias_map or {}
         search_tool = alias_map.get("search_tools", "search_tools")
         exec_tool = alias_map.get("call_tool_chain", "call_tool_chain")
+        backend_name = (self.env or {}).get("SCM_EXECUTOR_BACKEND", "local")
+        caps = _runtime_capabilities(backend_name)
         emit_event(
             "runner.mcp.start",
             query=user_query,
             search_tool=search_tool,
             exec_tool=exec_tool,
             command=self.command,
+            runtime_capabilities=caps,
         )
 
         server_params = StdioServerParameters(
@@ -410,12 +515,30 @@ class MCPStdioCodeModeRunner:
                 await session.initialize()
                 tools = await session.list_tools()
                 available = [tool.name for tool in tools.tools]
+                tool_by_name = {tool.name: tool for tool in tools.tools}
                 logs.append(f"available_tools={available}")
+                logs.append(f"runtime_capabilities={json.dumps(caps)}")
                 emit_event("runner.mcp.tools_listed", count=len(available), tools=available)
+                search_tool = (
+                    _pick_tool_name(
+                        available=available,
+                        preferred=alias_map.get("search_tools"),
+                        fallback_priority=["search_tools", "searchTools", "search", "find_tools", "findTools"],
+                    )
+                    or search_tool
+                )
+                exec_tool = (
+                    _pick_tool_name(
+                        available=available,
+                        preferred=alias_map.get("call_tool_chain"),
+                        fallback_priority=["call_tool_chain", "runPlan", "execute", "tool_execute", "run_chain"],
+                    )
+                    or exec_tool
+                )
 
                 if "tools are available" in user_query.lower():
                     if "search_tools" in codemode_description.lower() and search_tool in available:
-                        args = {"task_description": "available tools"}
+                        args = _build_search_args(tool_by_name.get(search_tool))
                         emit_event("runner.mcp.tool_call.start", tool=search_tool, arguments=args)
                         result = await session.call_tool(search_tool, args)
                         emit_event("runner.mcp.tool_call.end", tool=search_tool)
@@ -436,7 +559,7 @@ class MCPStdioCodeModeRunner:
                         )
                         return out
 
-                    args = {"code": "tool discovery omitted"}
+                    args = _build_discovery_fallback_args(tool_by_name.get(exec_tool))
                     emit_event("runner.mcp.tool_call.start", tool=exec_tool, arguments=args)
                     await session.call_tool(exec_tool, args)
                     emit_event("runner.mcp.tool_call.end", tool=exec_tool)
@@ -457,7 +580,7 @@ class MCPStdioCodeModeRunner:
                     return out
 
                 if "calculate 17 + 25" in user_query.lower():
-                    args = {"code": "return 17 + 25;"}
+                    args = _build_execute_args(tool_by_name.get(exec_tool))
                     emit_event("runner.mcp.tool_call.start", tool=exec_tool, arguments=args)
                     result = await session.call_tool(exec_tool, args)
                     emit_event("runner.mcp.tool_call.end", tool=exec_tool)
