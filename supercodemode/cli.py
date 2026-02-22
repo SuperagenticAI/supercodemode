@@ -5,10 +5,10 @@ import json
 import os
 import sys
 
-from .engine import run_optimize, run_showcase
+from .engine import run_benchmark, run_optimize, run_showcase
 from .mcp_client_demo import run_demo_sync
 from .doctor import format_human_report, run_doctor
-from .io_utils import save_artifact
+from .io_utils import save_artifact, save_summary_artifacts
 from .runners import MCPStreamableHTTPCodeModeRunner, HTTPCodeModeRunner, StaticCodeModeRunner, build_default_mcp_stdio_runner
 
 DEFAULT_CLOUDFLARE_MCP_ENDPOINT = "https://mcp.cloudflare.com/mcp"
@@ -55,15 +55,33 @@ def _add_runner_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--mcp-command", default=sys.executable)
     p.add_argument("--mcp-server", default="")
     p.add_argument("--mcp-server-module", default="supercodemode.servers.demo_mcp_server")
-    p.add_argument("--executor-backend", choices=["local", "docker"], default="local")
+    p.add_argument("--executor-backend", choices=["local", "docker", "monty"], default="local")
     p.add_argument("--docker-image", default="python:3.12-alpine")
     p.add_argument("--artifact-dir", default="artifacts")
     p.add_argument("--save-artifact", action="store_true")
 
 
+def _set_obs_command_context(args: argparse.Namespace) -> None:
+    os.environ["SCM_OBS_COMMAND"] = str(args.command)
+    if hasattr(args, "runner"):
+        os.environ["SCM_OBS_RUNNER"] = str(getattr(args, "runner"))
+    elif args.command == "mcp-client":
+        os.environ["SCM_OBS_RUNNER"] = "mcp-stdio"
+    if hasattr(args, "executor_backend"):
+        os.environ["SCM_OBS_EXECUTOR_BACKEND"] = str(getattr(args, "executor_backend"))
+
+    # Default dataset label for built-in demos/benchmarks unless user already set one.
+    if not os.environ.get("SCM_OBS_DATASET_NAME") and args.command in {"showcase", "optimize", "benchmark"}:
+        os.environ["SCM_OBS_DATASET_NAME"] = "two_tool_dataset"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="scm", description="Super Code Mode CLI")
-    parser.add_argument("--obs-backend", choices=["none", "jsonl", "otlp"], default=None)
+    parser.add_argument(
+        "--obs-backend",
+        choices=["none", "jsonl", "otlp", "logfire", "mlflow", "langsmith", "langfuse"],
+        default=None,
+    )
     parser.add_argument("--obs-jsonl-path", default=None)
     parser.add_argument("--obs-otlp-endpoint", default=None)
     parser.add_argument("--run-id", default=None)
@@ -77,11 +95,14 @@ def main() -> None:
     p_opt.add_argument("--max-metric-calls", type=int, default=20)
     p_opt.add_argument("--seed", type=int, default=0)
 
+    p_bench = sub.add_parser("benchmark", help="Compare tool-call vs Code Mode strategy profiles")
+    _add_runner_args(p_bench)
+
     p_mcp = sub.add_parser("mcp-client", help="Run direct MCP client demo")
     p_mcp.add_argument("--mcp-command", default=sys.executable)
     p_mcp.add_argument("--mcp-server", default="")
     p_mcp.add_argument("--mcp-server-module", default="supercodemode.servers.demo_mcp_server")
-    p_mcp.add_argument("--executor-backend", choices=["local", "docker"], default="local")
+    p_mcp.add_argument("--executor-backend", choices=["local", "docker", "monty"], default="local")
     p_mcp.add_argument("--docker-image", default="python:3.12-alpine")
     p_mcp.add_argument("--artifact-dir", default="artifacts")
     p_mcp.add_argument("--save-artifact", action="store_true")
@@ -90,6 +111,7 @@ def main() -> None:
     p_doc.add_argument("--mcp-command", default=sys.executable)
     p_doc.add_argument("--mcp-server", default="")
     p_doc.add_argument("--mcp-server-module", default="supercodemode.servers.demo_mcp_server")
+    p_doc.add_argument("--executor-backend", choices=["local", "docker", "monty"], default="local")
     p_doc.add_argument("--docker-image", default="python:3.12-alpine")
     p_doc.add_argument("--no-docker-run", action="store_true")
     p_doc.add_argument("--no-mcp-roundtrip", action="store_true")
@@ -106,13 +128,15 @@ def main() -> None:
         os.environ["SCM_OBS_OTLP_ENDPOINT"] = args.obs_otlp_endpoint
     if args.run_id is not None:
         os.environ["SCM_RUN_ID"] = args.run_id
+    _set_obs_command_context(args)
 
     if args.command == "showcase":
         runner = _build_runner(args)
         result = run_showcase(runner)
         if args.save_artifact:
             path = save_artifact(result, artifact_dir=args.artifact_dir, prefix="scm_showcase")
-            result = {**result, "artifact_path": path}
+            summary_paths = save_summary_artifacts(result, artifact_dir=args.artifact_dir, prefix="scm_showcase")
+            result = {**result, "artifact_path": path, **summary_paths}
         print(json.dumps(result, indent=2))
         return
 
@@ -121,7 +145,18 @@ def main() -> None:
         result = run_optimize(runner, max_metric_calls=args.max_metric_calls, seed=args.seed)
         if args.save_artifact:
             path = save_artifact(result, artifact_dir=args.artifact_dir, prefix="scm_optimize")
-            result = {**result, "artifact_path": path}
+            summary_paths = save_summary_artifacts(result, artifact_dir=args.artifact_dir, prefix="scm_optimize")
+            result = {**result, "artifact_path": path, **summary_paths}
+        print(json.dumps(result, indent=2))
+        return
+
+    if args.command == "benchmark":
+        runner = _build_runner(args)
+        result = run_benchmark(runner)
+        if args.save_artifact:
+            path = save_artifact(result, artifact_dir=args.artifact_dir, prefix="scm_benchmark")
+            summary_paths = save_summary_artifacts(result, artifact_dir=args.artifact_dir, prefix="scm_benchmark")
+            result = {**result, "artifact_path": path, **summary_paths}
         print(json.dumps(result, indent=2))
         return
 
@@ -143,6 +178,7 @@ def main() -> None:
             mcp_command=args.mcp_command,
             mcp_server=args.mcp_server,
             mcp_server_module=args.mcp_server_module,
+            executor_backend=args.executor_backend,
             docker_image=args.docker_image,
             check_docker_run=not args.no_docker_run,
             check_mcp_roundtrip=not args.no_mcp_roundtrip,

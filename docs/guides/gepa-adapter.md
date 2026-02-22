@@ -2,6 +2,17 @@
 
 This page explains the GEPA Code Mode adapter changes used by this project.
 
+## What Code Mode Means Here
+
+In this project, "Code Mode" means a code-first MCP tool orchestration pattern
+where the model uses a small tool surface (typically discovery + execution) and
+generates code to drive multi-step work.
+
+Background:
+
+- Cloudflare blog (Code Mode + MCP context): `https://blog.cloudflare.com/code-mode-mcp/`
+- UTCP Code Mode implementation: `https://github.com/universal-tool-calling-protocol/code-mode`
+
 ## What Changed
 
 The adapter keeps optimization logic in GEPA and keeps runtime execution in runner classes.

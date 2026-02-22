@@ -8,14 +8,14 @@ This section contains runnable workflows with practical commands.
 - Cloudflare MCP direct and HTTP bridge optimization
 - GEPA adapter design and contribution scope
 - Gemini reflection optimization with low budget
-- local and Docker execution backend behavior
+- local, Docker, and Monty execution backend behavior
 
 ## Recommended Paths
 
 ### Path A: Local MCP Flow
 
 - [Examples Overview](examples.md)
-- [Local and Docker](local-docker.md)
+- [Local, Docker, and Monty](local-docker.md)
 
 ### Path B: Cloudflare MCP Flow
 

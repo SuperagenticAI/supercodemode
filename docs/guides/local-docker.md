@@ -1,6 +1,6 @@
-# Local and Docker Backends
+# Local, Docker, and Monty Backends
 
-SuperCodeMode demo MCP server supports two execution backends.
+SuperCodeMode demo MCP server supports multiple execution backends.
 
 ## Local Backend
 
@@ -17,6 +17,22 @@ scm showcase --runner mcp-stdio --executor-backend docker
 ```
 
 Best for safer code execution isolation.
+
+## Monty Backend
+
+```bash
+scm showcase --runner mcp-stdio --executor-backend monty
+```
+
+Best for a Python-native sandbox path without Docker.
+
+Monty setup:
+
+```bash
+pip install "supercodemode[monty]"
+```
+
+If Monty is not installed, the demo server returns a clear executor error.
 
 ## Docker Requirements
 

@@ -15,7 +15,7 @@ def main() -> None:
     parser.add_argument("--mcp-command", default=sys.executable)
     parser.add_argument("--mcp-server", default="")
     parser.add_argument("--mcp-server-module", default="supercodemode.servers.demo_mcp_server")
-    parser.add_argument("--executor-backend", choices=["local", "docker"], default="local")
+    parser.add_argument("--executor-backend", choices=["local", "docker", "monty"], default="local")
     parser.add_argument("--docker-image", default="python:3.12-alpine")
     parser.add_argument("--max-metric-calls", type=int, default=20)
     parser.add_argument("--seed", type=int, default=0)

@@ -40,6 +40,12 @@ Use Docker sandbox backend for tool execution:
 python examples/showcase_mcp_stdio.py --executor-backend docker
 ```
 
+Use Monty sandbox backend for tool execution:
+
+```bash
+python examples/showcase_mcp_stdio.py --executor-backend monty
+```
+
 Use a custom server script:
 
 ```bash
@@ -51,6 +57,8 @@ Save artifact JSON:
 ```bash
 python examples/showcase_mcp_stdio.py --save-artifact
 ```
+
+This also writes compact summary artifacts (comparison + baseline/tuned run summaries).
 
 ## 3) Showcase (HTTP runtime bridge)
 
@@ -82,11 +90,19 @@ Docker backend:
 python examples/optimize_mcp_stdio.py --executor-backend docker
 ```
 
+Monty backend:
+
+```bash
+python examples/optimize_mcp_stdio.py --executor-backend monty
+```
+
 Save artifact JSON:
 
 ```bash
 python examples/optimize_mcp_stdio.py --save-artifact
 ```
+
+This also writes a compact `run_summary` artifact.
 
 ## 6) Optimize (Cloudflare/HTTP bridge endpoint)
 
@@ -122,6 +138,12 @@ Docker execution backend:
 python examples/optimize_gemini_flash.py --executor-backend docker --max-metric-calls 8
 ```
 
+Monty execution backend:
+
+```bash
+python examples/optimize_gemini_flash.py --executor-backend monty --max-metric-calls 8
+```
+
 Save artifact JSON:
 
 ```bash
@@ -138,6 +160,12 @@ Docker backend:
 
 ```bash
 python examples/mcp_client_demo.py --executor-backend docker
+```
+
+Monty backend:
+
+```bash
+python examples/mcp_client_demo.py --executor-backend monty
 ```
 
 Save artifact JSON:
@@ -159,18 +187,25 @@ scm showcase --runner static
 scm showcase --runner mcp-stdio
 scm showcase --runner mcp-http
 scm showcase --runner mcp-stdio --executor-backend docker
+scm showcase --runner mcp-stdio --executor-backend monty
 scm showcase --runner http --endpoint http://localhost:8080/run-codemode
 scm optimize --runner mcp-stdio
 scm optimize --runner mcp-http
 scm optimize --runner mcp-stdio --executor-backend docker
+scm optimize --runner mcp-stdio --executor-backend monty
 scm optimize --runner http --endpoint http://localhost:8080/run-codemode
 scm mcp-client
 scm mcp-client --executor-backend docker
+scm mcp-client --executor-backend monty
+scm benchmark --runner mcp-stdio
+scm benchmark --runner mcp-stdio --executor-backend monty
+scm benchmark --runner mcp-http
 
 # with artifacts
 scm showcase --runner mcp-stdio --save-artifact
 scm optimize --runner mcp-stdio --save-artifact
 scm mcp-client --save-artifact
+scm benchmark --runner mcp-stdio --save-artifact
 
 # with observability (jsonl)
 scm --obs-backend jsonl --obs-jsonl-path artifacts/obs.jsonl showcase --runner mcp-stdio

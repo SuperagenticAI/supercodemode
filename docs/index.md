@@ -28,7 +28,7 @@ SuperCodeMode gives you a repeatable loop to improve these behaviors.
 - MCP stdio runner for local workflows
 - MCP streamable HTTP runner for direct Cloudflare MCP
 - HTTP runner for Cloudflare or bridge endpoints
-- local and Docker execution backend options in demo MCP server
+- local, Docker, and Monty execution backend options in demo MCP server
 - doctor checks for setup confidence
 - artifacts for run outputs and best candidates
 - observability output in JSONL and OTLP modes

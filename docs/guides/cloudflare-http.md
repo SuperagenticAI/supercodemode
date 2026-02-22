@@ -2,6 +2,17 @@
 
 This guide shows Cloudflare MCP direct usage and HTTP bridge usage.
 
+## What Code Mode Is (short intro)
+
+Code Mode is a code-first MCP usage pattern where the model works through a
+small tool surface (often discovery + execution) and generates code for
+multi-step actions.
+
+Related references:
+
+- Cloudflare MCP Code Mode blog: `https://blog.cloudflare.com/code-mode-mcp/`
+- UTCP Code Mode implementation: `https://github.com/universal-tool-calling-protocol/code-mode`
+
 ## Fit for Cloudflare Users
 
 Cloudflare users often have a two tool pattern:

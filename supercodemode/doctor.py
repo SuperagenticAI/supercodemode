@@ -16,6 +16,7 @@ def run_doctor(
     mcp_command: str,
     mcp_server: str,
     mcp_server_module: str,
+    executor_backend: str,
     docker_image: str,
     check_docker_run: bool,
     check_mcp_roundtrip: bool,
@@ -27,6 +28,7 @@ def run_doctor(
 
     _check_import(checks, "gepa")
     _check_import(checks, "mcp")
+    _check_optional_import(checks, "pydantic_monty", feature="monty executor")
 
     docker_ok = _check_docker_info(checks)
 
@@ -35,7 +37,13 @@ def run_doctor(
 
     if check_mcp_roundtrip:
         server_args = [mcp_server] if mcp_server else ["-m", mcp_server_module]
-        _check_mcp_roundtrip(checks, mcp_command=mcp_command, server_args=server_args)
+        _check_mcp_roundtrip(
+            checks,
+            mcp_command=mcp_command,
+            server_args=server_args,
+            executor_backend=executor_backend,
+            docker_image=docker_image,
+        )
 
     summary = _summarize(checks)
     report = {
@@ -57,6 +65,15 @@ def _check_import(checks: list[dict[str, str]], module_name: str) -> None:
         _add(checks, f"import:{module_name}", "pass", f"version={version}")
     except Exception as exc:
         _add(checks, f"import:{module_name}", "fail", str(exc))
+
+
+def _check_optional_import(checks: list[dict[str, str]], module_name: str, *, feature: str) -> None:
+    try:
+        mod = importlib.import_module(module_name)
+        version = getattr(mod, "__version__", "unknown")
+        _add(checks, f"import:{module_name}", "pass", f"version={version} ({feature})")
+    except Exception:
+        _add(checks, f"import:{module_name}", "warn", f"not installed (optional for {feature})")
 
 
 def _check_docker_info(checks: list[dict[str, str]]) -> bool:
@@ -106,12 +123,19 @@ def _check_docker_run(checks: list[dict[str, str]], image: str) -> None:
     _add(checks, "docker:run", "fail", detail)
 
 
-def _check_mcp_roundtrip(checks: list[dict[str, str]], *, mcp_command: str, server_args: list[str]) -> None:
+def _check_mcp_roundtrip(
+    checks: list[dict[str, str]],
+    *,
+    mcp_command: str,
+    server_args: list[str],
+    executor_backend: str,
+    docker_image: str,
+) -> None:
     try:
         result = run_demo_sync(
             command=mcp_command,
             server_args=server_args,
-            server_env={"SCM_EXECUTOR_BACKEND": "local", "SCM_DOCKER_IMAGE": "python:3.12-alpine"},
+            server_env={"SCM_EXECUTOR_BACKEND": executor_backend, "SCM_DOCKER_IMAGE": docker_image},
         )
     except Exception as exc:
         _add(checks, "mcp:roundtrip", "fail", str(exc))
@@ -151,6 +175,7 @@ def main() -> None:
     parser.add_argument("--mcp-command", default=sys.executable)
     parser.add_argument("--mcp-server", default="")
     parser.add_argument("--mcp-server-module", default="supercodemode.servers.demo_mcp_server")
+    parser.add_argument("--executor-backend", choices=["local", "docker", "monty"], default="local")
     parser.add_argument("--docker-image", default="python:3.12-alpine")
     parser.add_argument("--no-docker-run", action="store_true")
     parser.add_argument("--no-mcp-roundtrip", action="store_true")
@@ -162,6 +187,7 @@ def main() -> None:
         mcp_command=args.mcp_command,
         mcp_server=args.mcp_server,
         mcp_server_module=args.mcp_server_module,
+        executor_backend=args.executor_backend,
         docker_image=args.docker_image,
         check_docker_run=not args.no_docker_run,
         check_mcp_roundtrip=not args.no_mcp_roundtrip,

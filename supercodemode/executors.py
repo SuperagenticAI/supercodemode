@@ -157,10 +157,44 @@ class DockerCodeExecutor(CodeExecutor):
         return ExecutionResult(ok=False, output="", error=str(parsed.get("error", "Execution error")))
 
 
+class MontyCodeExecutor(CodeExecutor):
+    backend = "monty"
+
+    def __init__(self, timeout_seconds: float = 3.0) -> None:
+        self.timeout_seconds = timeout_seconds
+
+    def execute(self, code: str) -> ExecutionResult:
+        _ = self.timeout_seconds  # timeout enforcement depends on monty API/version
+        expr = _extract_expression(code)
+        if expr is None:
+            return ExecutionResult(ok=False, output="", error="No expression found")
+
+        try:
+            import pydantic_monty
+        except Exception:
+            return ExecutionResult(
+                ok=False,
+                output="",
+                error="pydantic-monty not installed (pip install 'supercodemode[monty]' or pip install pydantic-monty)",
+            )
+
+        try:
+            monty = _build_monty_program(pydantic_monty, expr)
+            result = _run_monty_program(monty)
+        except Exception as exc:
+            return ExecutionResult(ok=False, output="", error=f"Monty execution failed: {exc}")
+
+        # pydantic-monty versions may return a plain Python value or a wrapper object.
+        value = getattr(result, "output", result)
+        return ExecutionResult(ok=True, output=str(value))
+
+
 def build_executor(backend: str = "local", docker_image: str = "python:3.12-alpine") -> CodeExecutor:
     key = (backend or "local").strip().lower()
     if key == "docker":
         return DockerCodeExecutor(image=docker_image)
+    if key == "monty":
+        return MontyCodeExecutor()
     return LocalCodeExecutor()
 
 
@@ -201,3 +235,37 @@ def _parse_json_payload(payload: str) -> dict[str, object] | None:
     if isinstance(obj, dict):
         return obj
     return None
+
+
+def _build_monty_program(pydantic_monty: object, expr: str):
+    monty_cls = getattr(pydantic_monty, "Monty")
+    last_error: Exception | None = None
+    for kwargs in (
+        {"inputs": [], "script_name": "scm_expr.py"},
+        {"inputs": []},
+        {"script_name": "scm_expr.py"},
+        {},
+    ):
+        try:
+            return monty_cls(expr, **kwargs)
+        except TypeError as exc:
+            last_error = exc
+    if last_error is not None:
+        raise last_error
+    return monty_cls(expr)
+
+
+def _run_monty_program(monty_program: object):
+    if not hasattr(monty_program, "run"):
+        raise RuntimeError("Monty object has no run() method")
+
+    run = getattr(monty_program, "run")
+    last_error: Exception | None = None
+    for kwargs in ({}, {"inputs": {}}, {"inputs": []}):
+        try:
+            return run(**kwargs)
+        except TypeError as exc:
+            last_error = exc
+    if last_error is not None:
+        raise last_error
+    return run()

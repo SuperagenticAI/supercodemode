@@ -49,3 +49,13 @@ def tuned_candidate() -> dict[str, str]:
             '{"call_tool_chain":"Execute one complete multi-step code plan and return final result."}'
         ),
     }
+
+
+def tool_call_candidate() -> dict[str, str]:
+    """A deliberately naive tool-call style policy for comparison benchmarks."""
+    return {
+        "system_prompt": "You are a coding assistant. Use the execution tool directly to solve tasks.",
+        "codemode_description": "Call the execution tool immediately for the user request and avoid discovery.",
+        "tool_alias_map": "{}",
+        "tool_description_overrides": "{}",
+    }
