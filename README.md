@@ -5,11 +5,12 @@
 </p>
 
 [![PyPI version](https://img.shields.io/pypi/v/supercodemode.svg)](https://pypi.org/project/supercodemode/)
-[![Python versions](https://img.shields.io/pypi/pyversions/supercodemode.svg)](https://pypi.org/project/supercodemode/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](https://pypi.org/project/supercodemode/)
 [![License](https://img.shields.io/pypi/l/supercodemode.svg)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/SuperagenticAI/supercodemode/ci.yml?branch=main&label=ci)](https://github.com/SuperagenticAI/supercodemode/actions/workflows/ci.yml)
 [![Docs Deploy](https://img.shields.io/github/actions/workflow/status/SuperagenticAI/supercodemode/deploy-docs.yml?branch=main&label=docs-deploy)](https://github.com/SuperagenticAI/supercodemode/actions/workflows/deploy-docs.yml)
-[![Docs](https://img.shields.io/badge/docs-mkdocs-blue)](https://superagenticai.github.io/supercodemode/)
+[![Docs](https://img.shields.io/badge/docs-live-0EA5E9)](https://superagenticai.github.io/supercodemode/)
+[![GEPA](https://img.shields.io/badge/GEPA-docs-111827)](https://gepa-ai.github.io/gepa/)
 
 SuperCodeMode is a Python CLI and demo harness for optimizing Code Mode style
 client behavior in MCP workflows with GEPA.
@@ -18,7 +19,15 @@ It focuses on improving the text and routing policy around a small tool surface
 (typically discovery + execution), so agents make better tool choices and
 produce more reliable results.
 
-## What This Project Solves
+## 🔗 Quick Links
+
+- 📚 Docs: https://superagenticai.github.io/supercodemode/
+- 📦 PyPI: https://pypi.org/project/supercodemode/
+- 🧠 GEPA docs: https://gepa-ai.github.io/gepa/
+- ☁️ Cloudflare Code Mode MCP: https://blog.cloudflare.com/code-mode-mcp/
+- 🧰 UTCP Code Mode: https://github.com/universal-tool-calling-protocol/code-mode
+
+## ✨ What This Project Solves
 
 Many tool systems fail because the client logic is weak even when the tools are
 good.
@@ -33,14 +42,14 @@ Typical failures:
 SuperCodeMode gives you a repeatable GEPA-driven optimization loop to improve
 those behaviors.
 
-## Who This Is For
+## 👥 Who This Is For
 
 - Cloudflare Code Mode MCP users
 - MCP users running discovery + execution style tool patterns
 - platform engineers and evaluation teams
 - teams experimenting with Code Mode style agent behavior before changing server code
 
-## What Is Included
+## ✅ What Is Included
 
 - MCP stdio runner for local workflows
 - MCP streamable HTTP runner for direct Cloudflare MCP
@@ -50,7 +59,7 @@ those behaviors.
 - artifact saving for showcase/optimization runs
 - observability output (JSONL and OTLP)
 
-## What "Code Mode" Means Here
+## 🧩 What "Code Mode" Means Here
 
 Code Mode here means a code-first MCP orchestration pattern where the model uses
 a small tool surface and generates code for multi-step work.
@@ -60,7 +69,7 @@ Background:
 - Cloudflare Code Mode MCP blog: https://blog.cloudflare.com/code-mode-mcp/
 - UTCP Code Mode implementation: https://github.com/universal-tool-calling-protocol/code-mode
 
-## Install
+## 📦 Install
 
 From PyPI:
 
@@ -122,7 +131,7 @@ With `uv`:
 uv pip install -e .
 ```
 
-## Quick Start
+## ⚡ Quick Start
 
 Check your environment:
 
@@ -148,7 +157,7 @@ If Cloudflare MCP requires auth in your environment:
 scm showcase --runner mcp-http --auth-bearer "$CODEMODE_TOKEN"
 ```
 
-## What You Can Optimize
+## 🎯 What You Can Optimize
 
 SuperCodeMode uses GEPA to optimize Code Mode client-side text such as:
 
@@ -159,7 +168,7 @@ SuperCodeMode uses GEPA to optimize Code Mode client-side text such as:
 
 This improves client behavior without requiring server/runtime code changes.
 
-## How It Works (High Level)
+## 🧠 How It Works (High Level)
 
 SuperCodeMode demonstrates a GEPA-centric adapter approach where:
 
@@ -169,7 +178,7 @@ SuperCodeMode demonstrates a GEPA-centric adapter approach where:
 
 This keeps GEPA optimization logic separate from runtime transport details.
 
-## Common Commands
+## 🛠️ Common Commands
 
 ### Preflight
 
@@ -237,7 +246,7 @@ This compares three policy profiles on the same runner/dataset:
 - `codemode_baseline`
 - `codemode_optimized`
 
-## Examples
+## 🧪 Examples
 
 All runnable examples are under `examples/`.
 
@@ -262,7 +271,7 @@ Full example list:
 - Examples README (GitHub): https://github.com/SuperagenticAI/supercodemode/blob/main/examples/README.md
 - Examples guide (Docs): https://superagenticai.github.io/supercodemode/guides/examples/
 
-## Cloudflare MCP Notes
+## ☁️ Cloudflare MCP Notes
 
 - `mcp-http` runner defaults to `https://mcp.cloudflare.com/mcp`
 - Cloudflare MCP may require auth for your usage:
@@ -280,7 +289,7 @@ In that case, the primary success signal is:
 - case 2 selects `execute`
 - case 2 returns `42`
 
-## Local, Docker, and Monty Execution
+## 🧱 Local, Docker, and Monty Execution
 
 Use Monty for a Python-native sandboxed execution path in demo MCP flows:
 
@@ -303,7 +312,7 @@ Requirements:
 - Docker daemon running
 - your user can run `docker run`
 
-## Observability
+## 📈 Observability
 
 JSONL:
 
@@ -353,22 +362,22 @@ Benchmark and run summaries also include:
 - runtime capability hints (for example local vs docker vs monty constraints)
 - error taxonomy rollups (`error_categories`) for quick failure analysis
 
-## Relationship to GEPA
+## 🧠 Relationship to GEPA
 
 This repo is the end-to-end GEPA optimization demo and experimentation harness
 for the GEPA Code Mode adapter work (examples, CLI, docs, local/docker/monty
 execution, observability).
 
-GEPA docs (main site): https://gepa-ai.github.io/gepa/
+GEPA docs (main site): [https://gepa-ai.github.io/gepa/](https://gepa-ai.github.io/gepa/)
 
 GEPA PR (status may change):
 
-- `https://github.com/gepa-ai/gepa/pull/225`
+- https://github.com/gepa-ai/gepa/pull/225
 
 Whether the adapter lands in GEPA mainline now or later, SuperCodeMode can be
 used directly for GEPA-based optimization of Code Mode behavior.
 
-## What Is Not Included by Default
+## 🚫 What Is Not Included by Default
 
 - automatic server code mutation
 - automatic deploy pipelines for MCP servers
@@ -376,13 +385,13 @@ used directly for GEPA-based optimization of Code Mode behavior.
 
 This project is focused on client-side behavior optimization and runnable demos.
 
-## Documentation
+## 📚 Documentation
 
-- Docs homepage: https://superagenticai.github.io/supercodemode/
-- Getting started: https://superagenticai.github.io/supercodemode/getting-started/
-- Examples and guides: https://superagenticai.github.io/supercodemode/guides/
-- CLI reference: https://superagenticai.github.io/supercodemode/reference/cli/
-- Operations: https://superagenticai.github.io/supercodemode/operations/
+- [Docs homepage](https://superagenticai.github.io/supercodemode/)
+- [Getting started](https://superagenticai.github.io/supercodemode/getting-started/)
+- [Examples and guides](https://superagenticai.github.io/supercodemode/guides/)
+- [CLI reference](https://superagenticai.github.io/supercodemode/reference/cli/)
+- [Operations](https://superagenticai.github.io/supercodemode/operations/)
 
 Run docs locally:
 
@@ -396,14 +405,14 @@ Build docs:
 mkdocs build
 ```
 
-## Development Notes
+## 🧰 Development Notes
 
 - `scm` uses installed `gepa` and `mcp` from your environment
 - a vendored GEPA contribution snapshot exists in `vendor/gepa_new_files`
 - refresh vendor snapshot with:
   - `GEPA_SOURCE_DIR=/path/to/gepa ./scripts/sync_gepa_vendor.sh`
 
-## Release (Maintainers)
+## 🚀 Release (Maintainers)
 
 Build and publish with `uv`:
 
