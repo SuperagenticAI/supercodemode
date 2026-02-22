@@ -6,7 +6,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/supercodemode.svg)](https://pypi.org/project/supercodemode/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](https://pypi.org/project/supercodemode/)
-[![License](https://img.shields.io/pypi/l/supercodemode.svg)](LICENSE)
+[![License](https://img.shields.io/github/license/SuperagenticAI/supercodemode)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/SuperagenticAI/supercodemode/ci.yml?branch=main&label=ci)](https://github.com/SuperagenticAI/supercodemode/actions/workflows/ci.yml)
 [![Docs Deploy](https://img.shields.io/github/actions/workflow/status/SuperagenticAI/supercodemode/deploy-docs.yml?branch=main&label=docs-deploy)](https://github.com/SuperagenticAI/supercodemode/actions/workflows/deploy-docs.yml)
 [![Docs](https://img.shields.io/badge/docs-live-0EA5E9)](https://superagenticai.github.io/supercodemode/)
@@ -393,32 +393,9 @@ This project is focused on client-side behavior optimization and runnable demos.
 - [CLI reference](https://superagenticai.github.io/supercodemode/reference/cli/)
 - [Operations](https://superagenticai.github.io/supercodemode/operations/)
 
-Run docs locally:
-
-```bash
-mkdocs serve
-```
-
-Build docs:
-
-```bash
-mkdocs build
-```
-
 ## 🧰 Development Notes
 
 - `scm` uses installed `gepa` and `mcp` from your environment
 - a vendored GEPA contribution snapshot exists in `vendor/gepa_new_files`
 - refresh vendor snapshot with:
   - `GEPA_SOURCE_DIR=/path/to/gepa ./scripts/sync_gepa_vendor.sh`
-
-## 🚀 Release (Maintainers)
-
-Build and publish with `uv`:
-
-```bash
-uv build
-uv publish
-```
-
-If publishing to PyPI, make sure your credentials/token are configured for `uv publish`.
