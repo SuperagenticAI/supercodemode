@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/pypi/l/supercodemode.svg)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/SuperagenticAI/supercodemode/ci.yml?branch=main&label=ci)](https://github.com/SuperagenticAI/supercodemode/actions/workflows/ci.yml)
 [![Docs Deploy](https://img.shields.io/github/actions/workflow/status/SuperagenticAI/supercodemode/deploy-docs.yml?branch=main&label=docs-deploy)](https://github.com/SuperagenticAI/supercodemode/actions/workflows/deploy-docs.yml)
-[![Docs](https://img.shields.io/badge/docs-mkdocs-blue)](docs/)
+[![Docs](https://img.shields.io/badge/docs-mkdocs-blue)](https://superagenticai.github.io/supercodemode/)
 
 SuperCodeMode is a Python CLI and demo harness for optimizing Code Mode style
 client behavior in MCP workflows with GEPA.
@@ -57,8 +57,8 @@ a small tool surface and generates code for multi-step work.
 
 Background:
 
-- Cloudflare Code Mode MCP blog: `https://blog.cloudflare.com/code-mode-mcp/`
-- UTCP Code Mode implementation: `https://github.com/universal-tool-calling-protocol/code-mode`
+- Cloudflare Code Mode MCP blog: https://blog.cloudflare.com/code-mode-mcp/
+- UTCP Code Mode implementation: https://github.com/universal-tool-calling-protocol/code-mode
 
 ## Install
 
@@ -259,8 +259,8 @@ python examples/optimize_gemini_flash.py --max-metric-calls 4
 
 Full example list:
 
-- `examples/README.md`
-- `docs/guides/examples.md`
+- Examples README (GitHub): https://github.com/SuperagenticAI/supercodemode/blob/main/examples/README.md
+- Examples guide (Docs): https://superagenticai.github.io/supercodemode/guides/examples/
 
 ## Cloudflare MCP Notes
 
@@ -359,6 +359,8 @@ This repo is the end-to-end GEPA optimization demo and experimentation harness
 for the GEPA Code Mode adapter work (examples, CLI, docs, local/docker/monty
 execution, observability).
 
+GEPA docs (main site): https://gepa-ai.github.io/gepa/
+
 GEPA PR (status may change):
 
 - `https://github.com/gepa-ai/gepa/pull/225`
@@ -376,11 +378,11 @@ This project is focused on client-side behavior optimization and runnable demos.
 
 ## Documentation
 
-- docs homepage: `docs/index.md`
-- getting started: `docs/getting-started/`
-- examples and guides: `docs/guides/`
-- CLI reference: `docs/reference/`
-- operations: `docs/operations/`
+- Docs homepage: https://superagenticai.github.io/supercodemode/
+- Getting started: https://superagenticai.github.io/supercodemode/getting-started/
+- Examples and guides: https://superagenticai.github.io/supercodemode/guides/
+- CLI reference: https://superagenticai.github.io/supercodemode/reference/cli/
+- Operations: https://superagenticai.github.io/supercodemode/operations/
 
 Run docs locally:
 
