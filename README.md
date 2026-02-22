@@ -15,9 +15,11 @@
 SuperCodeMode is a Python CLI and demo harness for optimizing Code Mode style
 client behavior in MCP workflows with GEPA.
 
-It focuses on improving the text and routing policy around a small tool surface
-(typically discovery + execution), so agents make better tool choices and
-produce more reliable results.
+> **Optimize Code Mode with GEPA. Run anywhere.**
+
+It improves the text and routing policy around a small tool surface (typically
+discovery + execution), so agents make better tool choices and produce more
+reliable results without backend lock-in.
 
 ## 🔗 Quick Links
 

@@ -4,9 +4,11 @@
   <img src="https://raw.githubusercontent.com/SuperagenticAI/supercodemode/main/assets/supercodemode.png" alt="SuperCodeMode logo" width="220">
 </p>
 
-SuperCodeMode is an optimization framework for Code Mode style client behavior.
+SuperCodeMode helps you optimize Code Mode behavior with GEPA and run it on any backend.
 
-It helps MCP and HTTP tool users improve quality by tuning client side instruction text and routing policy.
+Optimize Code Mode with GEPA. Run anywhere.
+
+It helps MCP and HTTP tool users improve quality by tuning client side instruction text and routing policy without tying users to a specific runtime provider.
 
 ## What This Project Solves
 
