@@ -10,6 +10,17 @@ Optimize Code Mode with GEPA. Run anywhere.
 
 It helps MCP and HTTP tool users improve quality by tuning client side instruction text and routing policy without tying users to a specific runtime provider.
 
+## What You Need to Bring (Real Usage)
+
+SuperCodeMode is most useful when you already have:
+
+- an MCP server or Code Mode runtime (Cloudflare, local, UTCP, internal)
+- a small dataset of real tasks
+- a scoring rule (metric) for success
+- a client config where you can apply optimized prompt/Code Mode settings
+
+Read `guides/from-demo-to-real-workflow.md` for the practical workflow.
+
 ## What This Project Solves
 
 Many tool systems fail because the client logic is weak, even when tools are good.
@@ -80,6 +91,12 @@ scm showcase --runner mcp-http
 scm showcase --runner mcp-stdio
 ```
 
+Cloudflare MCP often requires auth:
+
+```bash
+scm showcase --runner mcp-http --auth-bearer "$CODEMODE_TOKEN"
+```
+
 ## Recommended Next Commands
 
 ```bash
@@ -92,6 +109,7 @@ scm --obs-backend jsonl --obs-jsonl-path artifacts/obs.jsonl showcase --runner m
 - install: `getting-started/install.md`
 - first run: `getting-started/first-run.md`
 - examples: `guides/examples.md`
+- from demo to real workflow: `guides/from-demo-to-real-workflow.md`
 - gepa adapter: `guides/gepa-adapter.md`
 - cloudflare http: `guides/cloudflare-http.md`
 - cli reference: `reference/cli.md`

@@ -21,6 +21,22 @@ It improves the text and routing policy around a small tool surface (typically
 discovery + execution), so agents make better tool choices and produce more
 reliable results without backend lock-in.
 
+## 🧭 What You Need To Use This In Your Workflow
+
+SuperCodeMode does not replace your MCP server. It optimizes the client-side
+Code Mode behavior that uses your server.
+
+For real usage, bring:
+
+- an MCP server or Code Mode runtime (Cloudflare, local MCP, UTCP, internal)
+- a small dataset of real tasks
+- a scoring metric (what counts as success)
+- a client config where you can apply optimized prompts / Code Mode text
+
+Start with the built-in smoke tests, then follow the docs guide for real usage:
+
+- Docs guide: https://superagenticai.github.io/supercodemode/guides/from-demo-to-real-workflow/
+
 ## 🔗 Quick Links
 
 - 📚 Docs: https://superagenticai.github.io/supercodemode/
@@ -147,6 +163,12 @@ Run a Cloudflare MCP showcase (defaults to `https://mcp.cloudflare.com/mcp`):
 scm showcase --runner mcp-http
 ```
 
+Cloudflare MCP usually requires auth:
+
+```bash
+scm showcase --runner mcp-http --auth-bearer "$CODEMODE_TOKEN"
+```
+
 Run a local MCP showcase (demo server over stdio):
 
 ```bash
@@ -179,6 +201,10 @@ SuperCodeMode demonstrates a GEPA-centric adapter approach where:
 3. the same optimization logic can be reused across local and remote transports
 
 This keeps GEPA optimization logic separate from runtime transport details.
+
+For the full practical workflow (dataset, metric, optimize, apply best candidate):
+
+- https://superagenticai.github.io/supercodemode/guides/from-demo-to-real-workflow/
 
 ## 🛠️ Common Commands
 
